@@ -1,7 +1,7 @@
 <div class="image-main">
   <p>image-to-fourier works!</p>
   <h2>Image To Fourier</h2>
-  <input type="file" (change)="uploadImage($event)" accept="image/svg+xml">
+  <input type="file" (change)="uploadImage($event)" accept="image/svg+xml, image/jpeg, image/png, image/gif">
   <div id="imageContainer">
     <img class="image-window" [src]="imageSrc" *ngIf="imageSrc">
   </div>

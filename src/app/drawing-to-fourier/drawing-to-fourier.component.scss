@@ -12,3 +12,13 @@
     margin-bottom: 20px;
   }
 }
+
+.drawing-canvas {
+  border: #333333;
+  border-style: ridge;
+  padding: 1px;
+  margin: 2px;
+  height: 500px;
+  width: 600px;
+  position: relative;
+}
