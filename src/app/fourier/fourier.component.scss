@@ -1,0 +1,9 @@
+.drawing-canvas {
+  border: #333333;
+  border-style: ridge;
+  padding: 1px;
+  height: 500px;
+  width: 600px;
+  position: relative;
+  margin-left: 600px; //Need to be dynamic and not hardcoded
+}

@@ -1,2 +1,24 @@
 <p>fourier works!</p>
-<div id="sketch-holder"></div>
+
+<form (ngSubmit)="onSubmit()">
+  <label for="speed">Speed:</label>
+  <input type="range" id="speed" name="speed" [(ngModel)]="speed" required min="1" max="120">
+  <br>
+  <label for="circles">Circles:</label>
+  <input type="range" id="circles" name="circles" [(ngModel)]="n_circles" required min="1" max="10000">
+  <br>
+  <button type="submit">Submit</button>
+</form>
+<br>
+<div class="drawing-canvas">
+  <div id="sketch-holder"></div>
+</div>
+
+<div>
+  <button (click)="onClearPress()">Clear</button>
+  <button (click)="onDrawPress()">Fourier It</button>
+</div>
+
+
+
+

@@ -34,8 +34,7 @@
             ],
             "scripts": [
               "../node_modules/p5/lib/p5.min.js",
-              "../node_modules/p5/lib/addons/p5.sound.js",
-              "../node_modules/p5/lib/addons/p5.dom.js"
+              "../node_modules/p5/lib/addons/p5.sound.js"
             ]
           },
           "configurations": {
@@ -101,8 +100,7 @@
             ],
             "scripts": [
               "../node_modules/p5/lib/p5.min.js",
-              "../node_modules/p5/lib/addons/p5.sound.js",
-              "../node_modules/p5/lib/addons/p5.dom.js"
+              "../node_modules/p5/lib/addons/p5.sound.js"
             ]
           }
         }
