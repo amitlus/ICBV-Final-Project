@@ -18,15 +18,14 @@ export class ImageToFourierComponent implements OnInit {
     //The event argument in the uploadImage method is of type any, but it is commonly passed in as a change event from an HTML input element of type file.
     // The input element of type file has a files property that is an array-like object of all the files selected by the user. This property is used to access the selected file, which is the first file in the array event.target.files[0].
     const file = event.target.files[0];
-    debugger;
-
     const reader = new FileReader();
     reader.onload = (e) => {
       debugger;
       const img = new Image();
       img.src = reader.result as string;
 
-      img.onload = () => {
+      img.onload = (e) => {
+        debugger;
 
         const canvas = document.createElement("canvas");
         canvas.width = img.width;
@@ -46,8 +45,8 @@ export class ImageToFourierComponent implements OnInit {
 
         this.imageSrc = edgeCanvas.toDataURL();
       };
-      reader.readAsDataURL(file);
     }
+    reader.readAsDataURL(file);
   }
 
   // uploadImage(event: any) {
