@@ -65,7 +65,7 @@ export class FourierComponent implements OnInit {
         // creating a reference to the div here positions it, so you can put things above and below
         // where the sketch is displayed
         mainCanvas.parent("sketch-holder");
-        s.background(0);
+        s.background(35);
         s.fill(255);
         s.textSize(32);
         s.text(
