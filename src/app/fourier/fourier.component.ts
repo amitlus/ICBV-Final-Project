@@ -28,6 +28,7 @@ export class Complex {
   templateUrl: "./fourier.component.html",
   styleUrls: ["./fourier.component.scss"],
 })
+
 export class FourierComponent implements OnInit {
   private drawing: any[] = [];
   x: any[] = [];
