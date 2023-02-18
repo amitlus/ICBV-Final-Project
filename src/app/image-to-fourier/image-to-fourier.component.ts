@@ -20,13 +20,9 @@ export class ImageToFourierComponent implements OnInit {
     const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
-      debugger;
       const img = new Image();
       img.src = reader.result as string;
-
       img.onload = (e) => {
-        debugger;
-
         const canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
