@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import * as p5 from 'p5';
+import { Component, Input, OnInit } from "@angular/core";
+import * as p5 from "p5";
 //In order to use p5 in my Angular project I needed to run: npm install --save @types/p5 in addition to the basic  npm install p5 --save command
 
 export class Complex {
@@ -24,39 +24,35 @@ export class Complex {
 }
 
 @Component({
-  selector: 'app-fourier',
-  templateUrl: './fourier.component.html',
-  styleUrls: ['./fourier.component.scss']
+  selector: "app-fourier",
+  templateUrl: "./fourier.component.html",
+  styleUrls: ["./fourier.component.scss"],
 })
 export class FourierComponent implements OnInit {
   private drawing: any[] = [];
 
-  //BASE_DRAWING.JS
   x: any[] = [];
-  fourier:any;
-  time:number = 0;
+  fourier: any;
+  time: number = 0;
   path: any[] = [];
   @Input()
-  speed:number = 60;
+  speed: number = 60;
   @Input()
-  n_circles:number = 10000;
+  n_circles: number = 10000;
+  sliderMaxCircles: number = 99999;
 
-  sliderMaxCircles:number = 99999;
-
-  //USER_DRAWING
-  USER:number = 0;
-  FOURIER:number = 1;
-  DEFAULT:number = 2;
-  RESET:number = 3;
+  USER: number = 0;
+  FOURIER: number = 1;
+  DEFAULT: number = 2;
+  RESET: number = 3;
 
   state: number = -1;
-  canvasWidth:number = 600;
-  canvasHeight:number = 600;
+  canvasWidth: number = 600;
+  canvasHeight: number = 600;
 
   canvas: any;
   sw = 2;
   c = [];
-  strokeColor = 0;
 
   private sketch: any = null;
 
@@ -72,11 +68,15 @@ export class FourierComponent implements OnInit {
         let mainCanvas = s.createCanvas(this.canvasWidth, this.canvasHeight);
         // creating a reference to the div here positions it, so you can put things above and below
         // where the sketch is displayed
-        mainCanvas.parent('sketch-holder');
+        mainCanvas.parent("sketch-holder");
         s.background(0);
         s.fill(255);
         s.textSize(32);
-        s.text("Draw Something!", this.canvasWidth / 3.5, this.canvasHeight / 2);
+        s.text(
+          "Draw Something!",
+          this.canvasWidth / 3.5,
+          this.canvasHeight / 2
+        );
 
         this.drawing = [];
         this.x = [];
@@ -94,7 +94,9 @@ export class FourierComponent implements OnInit {
         if (this.state === this.FOURIER) {
           this.x = s.getDrawingCoordinates(this.drawing);
           this.fourier = s.dft(this.x);
-          this.fourier.sort((a: { amp: number; }, b: { amp: number; }) => b.amp - a.amp);
+          this.fourier.sort(
+            (a: { amp: number }, b: { amp: number }) => b.amp - a.amp
+          );
           s.drawFourierTransform();
         }
         if (this.state === this.RESET) {
@@ -102,7 +104,6 @@ export class FourierComponent implements OnInit {
         }
         s.frameRate(this.speed);
       };
-
 
       //Follow user's mouse and draw it on screen, save drawing points in drawing.
       s.drawUserDrawing = () => {
@@ -114,9 +115,12 @@ export class FourierComponent implements OnInit {
           s.vertex(v.x + s.width / 2, v.y + s.height / 2);
         }
         s.endShape();
-        let point = s.createVector(s.mouseX - s.width / 2, s.mouseY - s.height / 2);
+        let point = s.createVector(
+          s.mouseX - s.width / 2,
+          s.mouseY - s.height / 2
+        );
         this.drawing.push(point);
-      }
+      };
 
       // Generate epicycles of the signals given by the fourier and draw the path created by them.
       s.drawFourierTransform = () => {
@@ -125,7 +129,11 @@ export class FourierComponent implements OnInit {
         s.fill(255);
         s.textSize(32);
         s.text(`speed=${this.speed}`, s.width / 2 - 300, s.height - 5);
-        s.text(`number of circles=${this.n_circles}`, s.width / 2 - 50, s.height - 5);
+        s.text(
+          `number of circles=${this.n_circles}`,
+          s.width / 2 - 50,
+          s.height - 5
+        );
         const v = s.epicycles(s.width / 2, s.height / 2, 0, this.fourier);
         this.path.unshift(v);
         s.drawPath();
@@ -134,7 +142,7 @@ export class FourierComponent implements OnInit {
           this.time = 0;
           this.path = [];
         }
-      }
+      };
 
       // Draw path created by the epicycles.
       s.drawPath = () => {
@@ -146,7 +154,7 @@ export class FourierComponent implements OnInit {
           s.vertex(this.path[i].x, this.path[i].y);
         }
         s.endShape();
-      }
+      };
 
       // Create all epicycles of fourier.
       s.epicycles = (x: number, y: number, rotation: number, fourier: any) => {
@@ -170,85 +178,91 @@ export class FourierComponent implements OnInit {
           }
         }
         return s.createVector(x, y);
-      }
+      };
 
       //Once mouse is pressed we reset -  we enter user mode.
       s.mousePressed = () => {
         //The mouse position related to the Canvas (s.mouseX and s.mouseY)
         if (
-          (s.mouseX > 0) &&
-          (s.mouseX < this.canvasWidth) &&
-          (s.mouseY > 0) &&
-          (s.mouseY < this.canvasHeight)
+          s.mouseX > 0 &&
+          s.mouseX < this.canvasWidth &&
+          s.mouseY > 0 &&
+          s.mouseY < this.canvasHeight
         ) {
           if (this.state !== this.FOURIER) {
             this.state = this.USER;
           }
-          }
-        }
-
-        //Once mouse is released -  we enter fourier mode.
-        //We get the coordinates of the drawing and using fourier transform get the base signals.
-        s.mouseReleased = () => {
-          if (this.state !== this.FOURIER) {
-            this.state = this.DEFAULT;
-          }
-        }
-
-        //Transform x,y coordinates of drawing to set of complex numbers.
-        s.getDrawingCoordinates = (drawing: any[]) => {
-          let coords = [];
-          for (let i = 0; i < drawing.length; i++) {
-            coords.push(new Complex(drawing[i].x, drawing[i].y));
-          }
-          return coords;
-        }
-
-        s.dft = (x: Complex[]) => {
-          let X: Array<{ re: number, im: number, freq: number, amp: number, phase: number }> = [];
-          let N = x.length;
-          for (let k = 0; k < N; k++) {
-            let sum = new Complex(0, 0);
-            for (let n = 0; n < N; n++) {
-              let phi = (s.TWO_PI * k * n) / N;
-              let c = new Complex(s.cos(phi), -s.sin(phi));
-              sum.add(x[n].mult(c));
-            }
-            sum.re = sum.re / N;
-            sum.im = sum.im / N;
-            let freq = k;
-            let amp = s.sqrt(sum.re * sum.re + sum.im * sum.im);
-            let phase = s.atan2(sum.im, sum.re);
-            X[k] = {re: sum.re, im: sum.im, freq, amp, phase};
-          }
-          return X;
-        }
-
-        s.keyPressed = () => {
-          if (s.keyCode === s.LEFT_ARROW) {
-            this.speed = s.max(10, this.speed - 30);
-          } else if (s.keyCode === s.RIGHT_ARROW) {
-            if (this.speed == 10) this.speed = 0;
-            this.speed = s.min(120, this.speed + 30);
-          } else if (s.keyCode === s.UP_ARROW) {
-            this.n_circles++;
-          } else if (s.keyCode === s.DOWN_ARROW) {
-            this.n_circles = s.max(1, this.n_circles - 1);
-          }
         }
       };
-      this.canvas = new p5(this.sketch);
-    }
 
-  onSubmit(){
+      //Once mouse is released -  we enter fourier mode.
+      //We get the coordinates of the drawing and using fourier transform get the base signals.
+      s.mouseReleased = () => {
+        if (this.state !== this.FOURIER) {
+          this.state = this.DEFAULT;
+        }
+      };
+
+      //Transform x,y coordinates of drawing to set of complex numbers.
+      s.getDrawingCoordinates = (drawing: any[]) => {
+        let coords = [];
+        for (let i = 0; i < drawing.length; i++) {
+          coords.push(new Complex(drawing[i].x, drawing[i].y));
+        }
+        return coords;
+      };
+
+      s.dft = (x: Complex[]) => {
+        let X: Array<{
+          re: number;
+          im: number;
+          freq: number;
+          amp: number;
+          phase: number;
+        }> = [];
+        let N = x.length;
+        for (let k = 0; k < N; k++) {
+          let sum = new Complex(0, 0);
+          for (let n = 0; n < N; n++) {
+            let phi = (s.TWO_PI * k * n) / N;
+            let c = new Complex(s.cos(phi), -s.sin(phi));
+            sum.add(x[n].mult(c));
+          }
+          sum.re = sum.re / N;
+          sum.im = sum.im / N;
+          let freq = k;
+          let amp = s.sqrt(sum.re * sum.re + sum.im * sum.im);
+          let phase = s.atan2(sum.im, sum.re);
+          X[k] = { re: sum.re, im: sum.im, freq, amp, phase };
+        }
+        return X;
+      };
+
+      s.keyPressed = () => {
+        if (s.keyCode === s.LEFT_ARROW) {
+          this.speed = s.max(10, this.speed - 30);
+        } else if (s.keyCode === s.RIGHT_ARROW) {
+          if (this.speed == 10) this.speed = 0;
+          this.speed = s.min(120, this.speed + 30);
+        } else if (s.keyCode === s.UP_ARROW) {
+          this.n_circles++;
+        } else if (s.keyCode === s.DOWN_ARROW) {
+          this.n_circles = s.max(1, this.n_circles - 1);
+        }
+      };
+    };
+    this.canvas = new p5(this.sketch);
+  }
+
+  onSubmit() {
     console.log(`Speed: ${this.speed}, Circles: ${this.n_circles}`);
   }
 
-  onDrawPress(){
+  onDrawPress() {
     this.state = this.FOURIER;
   }
 
-  onClearPress(){
+  onClearPress() {
     this.state = this.RESET;
   }
 
@@ -259,5 +273,4 @@ export class FourierComponent implements OnInit {
       this.sketch = null;
     }
   }
-
 }
