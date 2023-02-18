@@ -30,7 +30,6 @@ export class Complex {
 })
 export class FourierComponent implements OnInit {
   private drawing: any[] = [];
-
   x: any[] = [];
   fourier: any;
   time: number = 0;
@@ -51,9 +50,6 @@ export class FourierComponent implements OnInit {
   canvasHeight: number = 600;
 
   canvas: any;
-  sw = 2;
-  c = [];
-
   private sketch: any = null;
 
   ngOnInit() {
@@ -236,19 +232,6 @@ export class FourierComponent implements OnInit {
           X[k] = { re: sum.re, im: sum.im, freq, amp, phase };
         }
         return X;
-      };
-
-      s.keyPressed = () => {
-        if (s.keyCode === s.LEFT_ARROW) {
-          this.speed = s.max(10, this.speed - 30);
-        } else if (s.keyCode === s.RIGHT_ARROW) {
-          if (this.speed == 10) this.speed = 0;
-          this.speed = s.min(120, this.speed + 30);
-        } else if (s.keyCode === s.UP_ARROW) {
-          this.n_circles++;
-        } else if (s.keyCode === s.DOWN_ARROW) {
-          this.n_circles = s.max(1, this.n_circles - 1);
-        }
       };
     };
     this.canvas = new p5(this.sketch);
