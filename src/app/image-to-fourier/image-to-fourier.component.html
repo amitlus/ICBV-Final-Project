@@ -1,12 +1,17 @@
-<div class="image-main">
-  <p>image-to-fourier works!</p>
-  <h2>Image To Fourier</h2>
-  <input type="file" (change)="uploadImage($event)" accept="image/svg+xml, image/jpeg, image/png, image/gif">
-  <div id="imageContainer">
-    <img class="image-window" [src]="imageSrc" *ngIf="imageSrc">
-  </div>
-  <button (click)="fourierImage()">Fourier it</button>
-  <br>
-  <br>
-
-</div>
+<main class="image-main">
+  <section class="image-section">
+    <h1 class="title">Image To Fourier</h1>
+    <p class="description">Upload an image file and apply Fourier transformation to it.</p>
+    <form>
+      <label for="inputTag" class="button-55">
+        Select Image <br/>
+        <input id="inputTag" class="input" type="file" (change)="uploadImage($event)" accept="image/svg+xml, image/jpeg, image/png, image/gif">
+      </label>
+      <div class="image-window" id="imageContainer">
+        <img class="image-window" [src]="imageSrc" *ngIf="imageSrc" alt="No Image Selected">
+      </div>
+      <br>
+      <button class="button-55" role="button" (click)="fourierImage()">Fourier it</button>
+    </form>
+  </section>
+</main>
