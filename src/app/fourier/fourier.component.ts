@@ -34,6 +34,7 @@ interface Point {
   templateUrl: "./fourier.component.html",
   styleUrls: ["./fourier.component.scss"],
 })
+
 export class FourierComponent implements OnInit {
   private drawing: any[] = [];
   x: any[] = [];
@@ -43,23 +44,22 @@ export class FourierComponent implements OnInit {
   @Input()
   speed: number = 60;
   @Input()
-  n_circles: number = 100000;
-  sliderMaxCircles: number = 99999;
+  n_circles: number = 10000;
+  sliderMaxCircles: number = 10000;
 
   USER_DRAW: number = 0;
   FOURIER: number = 1;
   DEFAULT: number = 2;
   RESET: number = 3;
   @Input()
-  IMAGE_MODE: boolean = false;
-  EDGE_DETECTION_PRESSED: boolean = false;
+  isImageMode: boolean = false;
+  isEdgeDetectionPressed: boolean = false;
   originalImage: string = "";
   imageAfterCanny: string = "";
 
   state: number = -1;
   canvasWidth: number = 600;
   canvasHeight: number = 600;
-
   canvas: any;
   private sketch: any = null;
   pointsList: Point[] = [];
@@ -125,9 +125,12 @@ export class FourierComponent implements OnInit {
       UP_ARROW: any;
       DOWN_ARROW: any;
     }) => {
+
       s.setup = () => {
         let mainCanvas = s.createCanvas(this.canvasWidth, this.canvasHeight);
-        if (!this.IMAGE_MODE) {
+        if (this.isImageMode) {
+          mainCanvas.parent("sketch-holder-for-upload");
+        } else {
           mainCanvas.parent("sketch-holder-for-drawing");
           s.background(35);
           s.fill(255);
@@ -137,8 +140,6 @@ export class FourierComponent implements OnInit {
             this.canvasWidth / 3.5,
             this.canvasHeight / 2
           );
-        } else {
-          mainCanvas.parent("sketch-holder-for-upload");
         }
         this.drawing = [];
         this.x = [];
@@ -153,7 +154,7 @@ export class FourierComponent implements OnInit {
       //FOURIER mode- to get the fourier transform drawing.
       //IMAGE_MODE- to get the image coordinates and draw its edges
       s.draw = () => {
-        if (this.IMAGE_MODE) {
+        if (this.isImageMode) {
           if (this.state === this.FOURIER) {
             this.x = s.getDrawingCoordinates(this.pointsList);
           }
@@ -221,8 +222,8 @@ export class FourierComponent implements OnInit {
         s.stroke(0, 255, 255);
         s.noFill();
         s.beginShape();
-        for (let i = 0; i < this.path.length; i++) {
-          s.vertex(this.path[i].x, this.path[i].y);
+        for (const element of this.path) {
+          s.vertex(element.x, element.y);
         }
         s.endShape();
       };
@@ -254,7 +255,7 @@ export class FourierComponent implements OnInit {
       //Once mouse is pressed we reset -  we enter user mode.
       s.mousePressed = () => {
         //The mouse position related to the Canvas (s.mouseX and s.mouseY)
-        if (!this.IMAGE_MODE) {
+        if (!this.isImageMode) {
           if (
             s.mouseX > 0 &&
             s.mouseX < this.canvasWidth &&
@@ -271,7 +272,7 @@ export class FourierComponent implements OnInit {
       //Once mouse is released -  we enter fourier mode.
       //We get the coordinates of the drawing and using fourier transform get the base signals.
       s.mouseReleased = () => {
-        if (!this.IMAGE_MODE && this.state !== this.FOURIER) {
+        if (!this.isImageMode && this.state !== this.FOURIER) {
           this.state = this.DEFAULT;
         }
       };
@@ -279,8 +280,8 @@ export class FourierComponent implements OnInit {
       //Transform x,y coordinates of drawing to set of complex numbers.
       s.getDrawingCoordinates = (drawing: any[]) => {
         let coords = [];
-        for (let i = 0; i < drawing.length; i++) {
-          coords.push(new Complex(drawing[i].x, drawing[i].y));
+        for (const element of drawing) {
+          coords.push(new Complex(element.x, element.y));
         }
         return coords;
       };
@@ -314,7 +315,7 @@ export class FourierComponent implements OnInit {
     this.canvas = new p5(this.sketch);
   }
 
-  onDrawPress() {
+  startFourierTransform() {
     this.state = this.FOURIER;
   }
 
@@ -323,7 +324,7 @@ export class FourierComponent implements OnInit {
   }
 
   onUploadImage(event: any) {
-    this.EDGE_DETECTION_PRESSED = false;
+    this.isEdgeDetectionPressed = false;
     const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -406,6 +407,6 @@ export class FourierComponent implements OnInit {
   }
 
   onEdgeDetectionPress() {
-    this.EDGE_DETECTION_PRESSED = true;
+    this.isEdgeDetectionPressed = true;
   }
 }
