@@ -34,7 +34,9 @@
             ],
             "scripts": [
               "../node_modules/p5/lib/p5.min.js",
-              "../node_modules/p5/lib/addons/p5.sound.js"
+              "../node_modules/p5/lib/addons/p5.sound.js",
+              "../src/opencv/opencv_init.js",
+              "../src/opencv/opencv.js"
             ]
           },
           "configurations": {
@@ -100,7 +102,9 @@
             ],
             "scripts": [
               "../node_modules/p5/lib/p5.min.js",
-              "../node_modules/p5/lib/addons/p5.sound.js"
+              "../node_modules/p5/lib/addons/p5.sound.js",
+              "../src/opencv/opencv_init.js",
+              "../src/opencv/opencv.js"
             ]
           }
         }

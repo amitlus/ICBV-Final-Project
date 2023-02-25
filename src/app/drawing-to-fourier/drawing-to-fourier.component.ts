@@ -6,7 +6,6 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./drawing-to-fourier.component.scss']
 })
 export class DrawingToFourierComponent implements OnInit {
-
   ngOnInit() {
   }
 }

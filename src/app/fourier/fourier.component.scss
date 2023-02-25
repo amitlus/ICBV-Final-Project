@@ -1,4 +1,49 @@
 .drawing-canvas {
+  position: relative;
+  padding: 1px;
+  margin: 2px auto;
+  height: 600px;
+  width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.drawing-canvas-upload {
+  position: relative;
+  border: 2px ridge #333333;
+  padding: 1px;
+  margin: 2px auto;
+  height: 600px;
+  width: 600px;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.wrapper {
+  display: flex;
+}
+
+.drawing-canvas-upload, .image-window {
+  display: inline-block;
+}
+
+
+#sketch-holder-for-upload {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+
+.image-window {
+  border: 2px ridge #333333; /* Add a 2px wide ridge border with #333333 color */
   padding: 1px;
   margin: 2px auto; /* Set left and right margins to "auto" to center the div horizontally */
   height: 600px;
@@ -77,3 +122,8 @@ input[type=range]::-webkit-slider-runnable-track  {
   background: #1C2129;
   border: 2px solid #EAE7E3;
 }
+
+.input {
+  display: none;
+}
+

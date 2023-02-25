@@ -1,5 +1,47 @@
 <p>fourier works!</p>
-<form (ngSubmit)="onSubmit()">
+
+<!--UPLOAD MODE-->
+
+<div *ngIf="IMAGE_MODE">
+  <label for="inputTag" class="button-55">
+    Select Image <br/>
+    <input id="inputTag" class="input" type="file" (change)="onUploadImage($event)" accept="image/jpeg, image/png">
+  </label>
+
+  <form>
+    <label for="speed1">Speed:</label>
+    <input type="range" id="speed1" name="speed1" [(ngModel)]="speed" required min="1" max="60">
+    <br>
+    <label for="circles1">Circles:</label>
+    <input type="range" id="circles1" name="circles1" [(ngModel)]="n_circles" required min="1" max={{sliderMaxCircles}}>
+    <br>
+  </form>
+  <br>
+
+  <div class="wrapper">
+    <img class="image-window" [src]="originalImage" *ngIf="originalImage" alt="No Image Selected">
+<!--    <div *ngIf=""-->
+    <img class="image-window" [src]="imageAfterCanny" *ngIf="EDGE_DETECTION_PRESSED && imageAfterCanny" alt="No Image">
+    <div class="drawing-canvas-upload">
+      <div id="sketch-holder-for-upload"></div>
+    </div>
+  </div>
+
+  <br>
+
+  <div>
+    <button class="button-55" role="button" (click)="onClearPress()">Clear</button>
+    <button class="button-55" role="button" (click)="onEdgeDetectionPress()">Edge Detection</button>
+    <button class="button-55" role="button" (click)="onDrawPress()">Fourier It</button>
+  </div>
+
+</div>
+
+
+<!--DRAWING MODE-->
+
+<div *ngIf="!IMAGE_MODE">
+<form>
   <label for="speed">Speed:</label>
   <input type="range" id="speed" name="speed" [(ngModel)]="speed" required min="1" max="60">
   <br>
@@ -9,10 +51,11 @@
 </form>
 <br>
 <div class="drawing-canvas">
-  <div id="sketch-holder"></div>
+  <div id="sketch-holder-for-drawing"></div>
 </div>
 <br>
 <div>
   <button class="button-55" role="button" (click)="onClearPress()">Clear</button>
   <button class="button-55" role="button" (click)="onDrawPress()">Fourier It</button>
+</div>
 </div>
