@@ -1,5 +1,3 @@
-<p>fourier works!</p>
-
 <!--UPLOAD MODE-->
 
 <div *ngIf="isImageMode">
@@ -7,6 +5,9 @@
     Select Image <br/>
     <input id="inputTag" class="input" type="file" (change)="onUploadImage($event)" accept="image/jpeg, image/png">
   </label>
+
+  <br>
+  <br>
 
   <form>
     <label for="speed1">Speed:</label>
@@ -32,7 +33,11 @@
     <button class="button-55" role="button" (click)="onClearPress()">Clear</button>
     <button class="button-55" role="button" (click)="onEdgeDetectionPress()">Edge Detection</button>
     <button class="button-55" role="button" (click)="startFourierTransform()">Fourier It</button>
+    <br>
+    <br>
+    <div class="comment">(*) made possible using the Canny edge detection algorithm </div>
   </div>
+
 
 </div>
 
