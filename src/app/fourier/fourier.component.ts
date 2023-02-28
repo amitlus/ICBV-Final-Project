@@ -37,32 +37,38 @@ interface Point {
 
 export class FourierComponent implements OnInit {
   private drawing: any[] = [];
-  x: any[] = [];
+  edgeCoordinates: any[] = [];
+  pointsList: Point[] = [];
   fourier: any;
   time: number = 0;
   path: any[] = [];
   @Input()
   speed: number = 60;
   @Input()
-  n_circles: number = 10000;
-  sliderMaxCircles: number = 10000;
+  numberOfCircles: number = Number.MAX_VALUE;
+  sliderMaxCircles: number = Number.MAX_VALUE;
 
+  //STATES
   USER_DRAW: number = 0;
   FOURIER: number = 1;
-  DEFAULT: number = 2;
+  WAIT_TO_FOURIER: number = 2;
   RESET: number = 3;
+  state: number = -1;
+
+  //FLAGS
   @Input()
   isImageMode: boolean = false;
   isEdgeDetectionPressed: boolean = false;
+
+  //PLACE HOLDERS
   originalImage: string = "";
   imageAfterCanny: string = "";
 
-  state: number = -1;
+  //CANVAS RELATED
   canvasWidth: number = 600;
   canvasHeight: number = 600;
   canvas: any;
   private sketch: any = null;
-  pointsList: Point[] = [];
 
   ngOnInit() {
     this.createSketch();
@@ -94,7 +100,7 @@ export class FourierComponent implements OnInit {
       createVector: (arg0: number, arg1: number) => any;
       mouseX: number;
       mouseY: number;
-      epicycles: (x: number, y: number, rotation: number, fourier: any) => any;
+      renderFourierAnimation: (x: number, y: number, rotation: number, fourier: any) => any;
       drawPath: () => void;
       strokeWeight: (arg0: number) => void;
       ellipse: (arg0: number, arg1: number, arg2: number) => void;
@@ -142,34 +148,26 @@ export class FourierComponent implements OnInit {
           );
         }
         this.drawing = [];
-        this.x = [];
+        this.edgeCoordinates = [];
         this.path = [];
         this.time = 0;
-        this.n_circles = 100000000000;
+        this.numberOfCircles = Number.MAX_VALUE;
         this.speed = 60;
-        this.state = this.DEFAULT;
+        this.state = this.WAIT_TO_FOURIER;
       };
 
       //USER_DRAW mode- to get user's drawing.
       //FOURIER mode- to get the fourier transform drawing.
-      //IMAGE_MODE- to get the image coordinates and draw its edges
+      //IMAGE_MODE- to identify between uploaded image to a drawing
       s.draw = () => {
-        if (this.isImageMode) {
-          if (this.state === this.FOURIER) {
-            this.x = s.getDrawingCoordinates(this.pointsList);
-          }
-        } else {
-          if (this.state === this.USER_DRAW) s.drawUserDrawing();
-          if (this.state === this.FOURIER) {
-            this.x = s.getDrawingCoordinates(this.drawing);
-          }
-        }
         if (this.state === this.FOURIER) {
-          this.fourier = s.dft(this.x);
-          this.fourier.sort(
-            (a: { amp: number }, b: { amp: number }) => b.amp - a.amp
-          );
+          this.edgeCoordinates = s.getDrawingCoordinates(this.isImageMode? this.pointsList : this.drawing);
+          this.fourier = s.dft(this.edgeCoordinates);
+          this.fourier.sort((a: { amp: number }, b: { amp: number }) => b.amp - a.amp);
           s.drawFourierTransform();
+        }
+        if (this.state === this.USER_DRAW) {
+          s.drawUserDrawing();
         }
         if (this.state === this.RESET) {
           s.setup();
@@ -199,15 +197,15 @@ export class FourierComponent implements OnInit {
         s.background(0);
         s.stroke(255);
         s.fill(255);
-        s.textSize(32);
+        s.textSize(28);
         s.text(`speed=${this.speed}`, s.width / 2 - 300, s.height - 5);
         s.text(
-          `number of circles=${this.n_circles}`,
+          `number of circles=${this.numberOfCircles}`,
           s.width / 2 - 50,
           s.height - 5
         );
-        const v = s.epicycles(s.width / 2, s.height / 2, 0, this.fourier);
-        this.path.unshift(v);
+        const currentPosition = s.renderFourierAnimation(s.width / 2, s.height / 2, 0, this.fourier);
+        this.path.unshift(currentPosition);
         s.drawPath();
         this.time += (Math.PI * 2) / this.fourier.length;
         if (this.time > Math.PI * 2) {
@@ -216,7 +214,7 @@ export class FourierComponent implements OnInit {
         }
       };
 
-      // Draw path created by the epicycles.
+      // Draw path created by the epicycles. (The drawing itself)
       s.drawPath = () => {
         s.strokeWeight(2);
         s.stroke(0, 255, 255);
@@ -228,11 +226,11 @@ export class FourierComponent implements OnInit {
         s.endShape();
       };
 
-      // Create all epicycles of fourier.
-      s.epicycles = (x: number, y: number, rotation: number, fourier: any) => {
+      // Create all epicycles of fourier and present them as animation & return the current position.
+      s.renderFourierAnimation = (x: number, y: number, rotation: number, fourier: any) => {
         this.sliderMaxCircles = fourier.length;
-        this.n_circles = Math.min(this.sliderMaxCircles, this.n_circles);
-        for (let i: number = 0; i < this.n_circles; i++) {
+        this.numberOfCircles = Math.min(this.sliderMaxCircles, this.numberOfCircles);
+        for (let i: number = 0; i < this.numberOfCircles; i++) {
           let prevx = x;
           let prevy = y;
           let freq = fourier[i].freq;
@@ -245,14 +243,14 @@ export class FourierComponent implements OnInit {
           s.noFill();
           s.ellipse(prevx, prevy, radius * 2);
           s.stroke(255);
-          if (i != this.n_circles - 1) {
+          if (i != this.numberOfCircles - 1) {
             s.line(prevx, prevy, x, y);
           }
         }
         return s.createVector(x, y);
       };
 
-      //Once mouse is pressed we reset -  we enter user mode.
+      //Once mouse is pressed we reset - entering USER_DRAW mode.
       s.mousePressed = () => {
         //The mouse position related to the Canvas (s.mouseX and s.mouseY)
         if (!this.isImageMode) {
@@ -269,11 +267,11 @@ export class FourierComponent implements OnInit {
         }
       };
 
-      //Once mouse is released -  we enter fourier mode.
+      //Once mouse is released - entering WAIT_TO_FOURIER mode.
       //We get the coordinates of the drawing and using fourier transform get the base signals.
       s.mouseReleased = () => {
         if (!this.isImageMode && this.state !== this.FOURIER) {
-          this.state = this.DEFAULT;
+          this.state = this.WAIT_TO_FOURIER;
         }
       };
 
@@ -286,32 +284,34 @@ export class FourierComponent implements OnInit {
         return coords;
       };
 
-      s.dft = (x: Complex[]) => {
-        let X: Array<{
+      s.dft = (pointsList: Complex[]) => {
+        let spectrum: Array<{
           re: number;
           im: number;
           freq: number;
           amp: number;
           phase: number;
         }> = [];
-        let N = x.length;
-        for (let k = 0; k < N; k++) {
+        let numPoints = pointsList.length;
+        for (let k = 0; k < numPoints; k++) {
           let sum = new Complex(0, 0);
-          for (let n = 0; n < N; n++) {
-            let phi = (s.TWO_PI * k * n) / N;
+          for (let n = 0; n < numPoints; n++) {
+            let phi = (s.TWO_PI * k * n) / numPoints;
             let c = new Complex(s.cos(phi), -s.sin(phi));
-            sum.add(x[n].mult(c));
+            sum.add(pointsList[n].mult(c));
           }
-          sum.re = sum.re / N;
-          sum.im = sum.im / N;
+          sum.re = sum.re / numPoints;
+          sum.im = sum.im / numPoints;
           let freq = k;
           let amp = s.sqrt(sum.re * sum.re + sum.im * sum.im);
           let phase = s.atan2(sum.im, sum.re);
-          X[k] = { re: sum.re, im: sum.im, freq, amp, phase };
+          spectrum[k] = { re: sum.re, im: sum.im, freq, amp, phase };
         }
-        return X;
+        return spectrum;
       };
+
     };
+
     this.canvas = new p5(this.sketch);
   }
 
@@ -327,40 +327,27 @@ export class FourierComponent implements OnInit {
     this.isEdgeDetectionPressed = false;
     const file = event.target.files[0];
     const reader = new FileReader();
+
     reader.onload = (e) => {
       const img = new Image();
       img.src = reader.result as string;
       this.originalImage = img.src;
+
       img.onload = (e) => {
         // Create a matrix from the image data
-        const src = cv.imread(img);
-        const resized = new cv.Mat();
+        const baseImage = cv.imread(img);
+        const resizedImage = new cv.Mat();
         // Resize the image
-        cv.resize(
-          src,
-          resized,
-          new cv.Size(this.canvasWidth, this.canvasHeight),
-          0,
-          0,
-          cv.INTER_LINEAR
-        );
+        cv.resize(baseImage, resizedImage, new cv.Size(this.canvasWidth, this.canvasHeight), 0, 0, cv.INTER_LINEAR);
         // Create an empty grayscale matrix
-        const gray = new cv.Mat();
+        const grayImage = new cv.Mat();
         // Convert the image to grayscale
-        cv.cvtColor(resized, gray, cv.COLOR_RGBA2GRAY);
-        // Create an empty edges matrix
-        const blurred = new cv.Mat();
-        cv.GaussianBlur(
-          gray,
-          blurred,
-          new cv.Size(7, 7),
-          0,
-          0,
-          cv.BORDER_DEFAULT
-        );
-        // Apply the Canny algorithm with the given thresholds
+        cv.cvtColor(resizedImage, grayImage, cv.COLOR_RGBA2GRAY);
+        const blurredImage = new cv.Mat();
+        cv.GaussianBlur(grayImage, blurredImage, new cv.Size(7, 7), 0, 0, cv.BORDER_DEFAULT);
         const edges = new cv.Mat();
-        cv.Canny(blurred, edges, 50, 150);
+        // Apply the Canny algorithm with the given thresholds
+        cv.Canny(blurredImage, edges, 50, 150);
 
         const canvas = document.createElement("canvas");
         canvas.width = img.width;
@@ -373,23 +360,18 @@ export class FourierComponent implements OnInit {
         // Find the contours of the edges
         const contours = new cv.MatVector();
         const hierarchy = new cv.Mat();
-        cv.findContours(
-          edges,
-          contours,
-          hierarchy,
-          cv.RETR_LIST,
-          cv.CHAIN_APPROX_SIMPLE
-        );
+        cv.findContours(edges, contours, hierarchy, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE);
         this.pointsList = [];
+
         // Extract the coordinates of the contours
         for (let i = 0; i < contours.size(); i++) {
           const contourData = contours.get(i).data32S;
           // Get the contour data as an array of integers
           for (let j = 0; j < contourData.length; j += 10) {
-            //We decreased by 300 because for some reason the painting started in the bottom right corner outside the canvas
+            //We decreased width and height in order to center the drawing
             const point = {
-              x: contourData[j] - 300,
-              y: contourData[j + 1] - 300,
+              x: contourData[j] - this.canvasWidth/2,
+              y: contourData[j + 1] - this.canvasHeight/2,
             };
             this.pointsList.push(point);
           }
