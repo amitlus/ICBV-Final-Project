@@ -27,6 +27,7 @@
 
 .drawing-canvas-upload, .image-window {
   display: inline-block;
+  aspect-ratio: 1 / 1;
 }
 
 
@@ -51,6 +52,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  aspect-ratio: 1 / 1;
 }
 
 //Buttons Styling
