@@ -1,8 +1,13 @@
-<<<<<<< HEAD
-# ICBV-Final-Project
 Ben Gurion University Final Project in ICBV course
 =======
-# FinalProject
+# Imaging With Fourier
+
+## How to run the project:
+
+1. Clone via your IDE terminal: gh repo clone amitlus/ICBV-Final-Project
+2. In your terminal in the directory you just cloned into cd into src\app 
+3. run the command: npm install -g @angular/cli
+
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.1.5.
 
@@ -21,4 +26,3 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
->>>>>>> master
