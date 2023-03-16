@@ -5,24 +5,10 @@ Ben Gurion University Final Project in ICBV course
 ## How to run the project:
 
 1. Clone via your IDE terminal: gh repo clone amitlus/ICBV-Final-Project
-2. In your terminal in the directory you just cloned into cd into src\app 
+2. In the terminal --> cd to the directory you just cloned into --> type: cd into src\app 
 3. run the command: npm install -g @angular/cli
-
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.1.5.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+4. run the command: Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser // In order to enable scripts run
+5. run the command: npm install
+6. Run `ng serve` for a dev server.
+7. Navigate to `http://localhost:4200/`. <br></br>
+   The application will automatically reload if you change any of the source files.
