@@ -1,5 +1,6 @@
 Ben Gurion University Final Project in ICBV course
 =======
+ICBV = Introduction to Computational and Biological Vision
 # Imaging With Fourier
 
 ## How to run the project:
